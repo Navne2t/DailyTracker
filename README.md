@@ -1,36 +1,243 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📊 Habit Intelligence Dashboard
 
-## Getting Started
+A premium, analytics-driven habit tracking dashboard built with Next.js (App Router) and deployed-ready for Vercel.
 
-First, run the development server:
+This is not just a basic habit tracker — it includes 6 levels of behavioral analytics, streak intelligence, momentum detection, and monthly growth insights.
 
-```bash
+🚀 Live Demo
+
+Add your deployed Vercel link here after deployment:
+
+https://your-app-name.vercel.app
+✨ Features
+🔥 1. Interactive Habit Heatmap
+
+Monthly habit matrix
+
+One-click daily tracking
+
+Real-time UI updates
+
+Persistent storage using localStorage
+
+Google Sheets logging via Apps Script
+
+📊 2. Discipline Score (Level 1 Analytics)
+
+Monthly completion percentage
+
+Total actions completed
+
+Performance classification
+
+Real-time score calculation
+
+📈 3. Habit Performance (Level 2 Analytics)
+
+Best performing habit detection
+
+Weakest habit identification
+
+Per-habit percentage calculation
+
+Visual performance bars
+
+🔥 4. Streak Analysis (Level 3 Analytics)
+
+Current streak tracking
+
+Longest streak detection
+
+Streak comparison per habit
+
+Longest streak across all habits
+
+🧠 5. Habit Intelligence (Level 4 Analytics)
+
+Weakest habit targeting
+
+Discipline type classification:
+
+Elite Discipline
+
+Strong Builder
+
+Inconsistent Performer
+
+Struggling Phase
+
+Behavioral improvement insight
+
+📊 6. Momentum & Risk Engine (Level 5 Analytics)
+
+Detects high momentum habits (≥3 day streak)
+
+Detects habits at risk (streak broken after ≥3 days)
+
+Risk categorization logic
+
+Early warning system for behavioral breakdown
+
+📈 7. Monthly Growth Trend (Level 6 Analytics)
+
+Compares current month vs previous month
+
+Calculates growth percentage
+
+Displays improvement or decline
+
+Encourages performance accountability
+
+🏗 Tech Stack
+Technology	Purpose
+Next.js 16 (App Router)	Frontend Framework
+React	UI State Management
+TypeScript	Type Safety
+Tailwind CSS	Premium UI Styling
+LocalStorage	Client-side persistence
+Google Apps Script	External habit logging
+Vercel	Deployment
+📂 Project Structure
+app/
+ ├── page.tsx              → Root redirect
+ └── tracker/
+      └── page.tsx         → Main dashboard
+public/
+package.json
+tsconfig.json
+🧠 Architecture Overview
+
+This project follows a local-first architecture:
+
+Data stored in localStorage
+
+Optional logging to Google Sheets
+
+No backend required
+
+Fully client-side execution
+
+Deployable on Vercel without configuration
+
+Future upgrade path:
+
+Supabase integration
+
+Neon/PostgreSQL backend
+
+User authentication
+
+Cross-device sync
+
+🖥 Local Development
+
+Clone the repository:
+
+git clone https://github.com/YOUR_USERNAME/DailyTracker.git
+cd DailyTracker
+
+Install dependencies:
+
+npm install
+
+Run development server:
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The root automatically redirects to:
 
-## Learn More
+/tracker
+🚀 Deployment (Vercel)
 
-To learn more about Next.js, take a look at the following resources:
+Push to GitHub
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Go to https://vercel.com
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Import repository
 
-## Deploy on Vercel
+Click Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+No environment variables required.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+📈 Analytics Philosophy
+
+This tracker is designed around 3 behavioral principles:
+
+Visibility drives consistency
+
+Streak momentum builds identity
+
+Weakness targeting improves discipline
+
+Instead of simple completion tracking, this dashboard:
+
+Identifies weak points
+
+Highlights performance trends
+
+Encourages incremental improvement
+
+Prevents streak collapse
+
+🎯 Why This Project Is Different
+
+Most habit trackers:
+
+Track checkboxes
+
+Show simple streaks
+
+This dashboard:
+
+Computes discipline score
+
+Detects risk behavior
+
+Measures momentum
+
+Calculates monthly growth
+
+Provides actionable intelligence
+
+It’s designed as a behavioral performance system, not just a tracker.
+
+🔮 Future Enhancements
+
+📊 Radial discipline chart
+
+📈 Chart.js growth visualization
+
+🔐 User authentication
+
+☁️ Cross-device sync
+
+🤖 AI habit recommendation engine
+
+📱 Mobile-first redesign
+
+🏆 Achievement system
+
+🌙 Theme customization
+
+👤 Author
+
+Navneet Prasad
+Engineer | Discipline Builder | Systems Thinker
+
+📜 License
+
+This project is open-source and available under the MIT License.
+
+⭐ If You Like This Project
+
+Star the repository
+
+Fork it
+
+Improve it
+
+Build your own intelligence layer
