@@ -36,6 +36,12 @@ export default function Tracker() {
 
   const isCurrentMonth =
     selectedYear === realYear && selectedMonth === realMonth;
+  const isPreviousMonth =
+    (selectedYear === realYear &&
+      selectedMonth === realMonth - 1) ||
+    (realMonth === 0 &&
+     selectedMonth === 11 &&
+      selectedYear === realYear - 1);
 
   const daysInMonth = new Date(
     selectedYear,
@@ -51,6 +57,16 @@ export default function Tracker() {
   const storageKey = `${selectedYear}-${selectedMonth + 1}-habit-data`;
 
   const [data, setData] = useState<any>({});
+  // ❤️ hearts per month
+  const heartKey = `${selectedYear}-${selectedMonth + 1}-hearts`;
+  const [hearts, setHearts] = useState(3);
+
+  const [editedDays, setEditedDays] = useState<number[]>([]);
+
+  const editKey =
+    `${selectedYear}-${selectedMonth + 1}-edited-days`;
+
+  
 
   // Load data
   useEffect(() => {
@@ -69,17 +85,56 @@ export default function Tracker() {
       });
       setData(initial);
     }
-  }, [storageKey, daysInMonth]);
+    // load hearts
+  const savedHearts = localStorage.getItem(heartKey);
+
+  if (savedHearts) {
+    setHearts(Number(savedHearts));
+  } else {
+  setHearts(3);
+  }
+  const savedEdit = localStorage.getItem(editKey);
+
+  if (savedEdit) {
+    setEditedDays(JSON.parse(savedEdit));
+  }
+  }, [storageKey, daysInMonth, heartKey, editKey]);
 
   useEffect(() => {
     if (mounted) {
       localStorage.setItem(storageKey, JSON.stringify(data));
     }
   }, [data, mounted, storageKey]);
+  // save hearts
+  useEffect(() => {
+  localStorage.setItem(heartKey, hearts.toString());
+  }, [hearts, heartKey]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      editKey,
+     JSON.stringify(editedDays)
+   );
+  }, [editedDays, editKey]);
 
   const toggle = async (habit: string, day: number) => {
-    if (!isCurrentMonth) return;
-    if (day !== realDay) return;
+
+  // use heart if editing past
+      if ((isCurrentMonth && day < realDay) ||(isPreviousMonth && day <= daysInMonth)) {
+
+      const alreadyEdited =
+        editedDays.includes(day);
+
+      if (!alreadyEdited) {
+
+      if (hearts <= 0) return;
+
+      setHearts((h) => h - 1);
+
+      setEditedDays((d) => [...d, day]);
+
+  }
+  }
 
     const newValue = !data[habit][day];
 
@@ -197,12 +252,25 @@ export default function Tracker() {
   );
 
   const totalPossible =
-    (isCurrentMonth ? realDay : daysInMonth) * habits.length;
-
+    (isCurrentMonth ? realDay : daysInMonth) * habits.length;  
+  
   const disciplineScore =
-    totalPossible === 0
-      ? 0
-      : Math.round((totalCompleted / totalPossible) * 100);
+  totalPossible === 0
+    ? 0
+    : Math.round((totalCompleted / totalPossible) * 100);
+
+const getHeartMessage = () => {
+  if (hearts === 3)
+    return "3 hearts available — You can fix 3 past days!";
+
+  if (hearts === 2)
+    return "2 hearts left — 2 past-day edits allowed!";
+
+  if (hearts === 1)
+    return "1 heart left — Only one correction left!";
+
+  return "No hearts left — Cannot edit past days.";
+};
 
   const goPrev = () => {
     if (selectedMonth === 0) {
@@ -236,17 +304,50 @@ export default function Tracker() {
         🔥 Habit Heatmap
       </h1>
 
-      {/* Month Navigation */}
+      {/* Month Navigation + Hearts */}
       <div className="flex items-center gap-4 mb-6">
-        <button onClick={goPrev} className="px-3 py-1 bg-gray-700 rounded">
-          ←
-        </button>
-        <h2 className="text-lg text-gray-300">
-          {monthName} {selectedYear}
-        </h2>
-        <button onClick={goNext} className="px-3 py-1 bg-gray-700 rounded">
-          →
-        </button>
+
+  <button
+    onClick={goPrev}
+    className="px-3 py-1 bg-gray-700 rounded"
+  >
+    ←
+  </button>
+
+  <h2 className="text-lg text-gray-300">
+    {monthName} {selectedYear}
+  </h2>
+
+  <button
+    onClick={goNext}
+    className="px-3 py-1 bg-gray-700 rounded"
+  >
+    →
+  </button>
+
+  {/* ❤️ Hearts right beside toggle */}
+  <div className="relative group ml-4">
+
+  <div className="flex gap-1 text-xl">
+    {[1, 2, 3].map((i) => (
+      <span key={i}>
+        {i <= hearts ? "❤️" : "🩶"}
+      </span>
+    ))}
+  </div>
+
+  {/* Tooltip */}
+  <div className="absolute left-full ml-2 bottom-0 hidden group-hover:block
+  bg-gray-800 text-white text-xs px-3 py-2 rounded shadow-lg w-52 z-50">
+
+    ❤️ Hearts = Past edit tokens  
+    <br />
+    {getHeartMessage()}
+
+  </div>
+
+</div>
+
       </div>
 
       {/* Heatmap */}
@@ -274,9 +375,11 @@ export default function Tracker() {
             {[...Array(daysInMonth)].map((_, i) => {
               const day = i + 1;
               const completed = data[habit]?.[day];
-              const clickable =
-                isCurrentMonth && day === realDay;
-
+              const clickable =(isCurrentMonth &&(day === realDay 
+                  ||(day < realDay &&(editedDays.includes(day) || hearts > 0))))
+                  ||(isPreviousMonth &&(editedDays.includes(day) 
+                  ||hearts > 0)
+                  );
               return (
                 <div
                   key={`${habit}-${day}`}
