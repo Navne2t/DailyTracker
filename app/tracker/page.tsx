@@ -46,13 +46,6 @@ export default function Tracker() {
 
   const isCurrentMonth =
     selectedYear === realYear && selectedMonth === realMonth;
-  // const isPreviousMonth =
-  //   (selectedYear === realYear &&
-  //     selectedMonth === realMonth - 1) ||
-  //   (realMonth === 0 &&
-  //    selectedMonth === 11 &&
-  //     selectedYear === realYear - 1);
-
   const daysInMonth = new Date(
     selectedYear,
     selectedMonth + 1,
