@@ -23,6 +23,16 @@ export default function Tracker() {
   const realMonth = todayDate.getMonth();
   const realDay = todayDate.getDate();
 
+  const yesterdayDate = new Date(
+  realYear,
+  realMonth,
+  realDay - 1
+);
+
+  const yYear = yesterdayDate.getFullYear();
+  const yMonth = yesterdayDate.getMonth();
+  const yDay = yesterdayDate.getDate();
+
   const [mounted, setMounted] = useState(false);
   const [selectedYear, setSelectedYear] = useState(realYear);
   const [selectedMonth, setSelectedMonth] = useState(realMonth);
@@ -36,12 +46,12 @@ export default function Tracker() {
 
   const isCurrentMonth =
     selectedYear === realYear && selectedMonth === realMonth;
-  const isPreviousMonth =
-    (selectedYear === realYear &&
-      selectedMonth === realMonth - 1) ||
-    (realMonth === 0 &&
-     selectedMonth === 11 &&
-      selectedYear === realYear - 1);
+  // const isPreviousMonth =
+  //   (selectedYear === realYear &&
+  //     selectedMonth === realMonth - 1) ||
+  //   (realMonth === 0 &&
+  //    selectedMonth === 11 &&
+  //     selectedYear === realYear - 1);
 
   const daysInMonth = new Date(
     selectedYear,
@@ -119,50 +129,47 @@ export default function Tracker() {
 
   const toggle = async (habit: string, day: number) => {
 
-  // use heart if editing past
-      if ((isCurrentMonth && day < realDay) ||(isPreviousMonth && day <= daysInMonth)) {
+  const isToday =
+    selectedYear === realYear &&
+    selectedMonth === realMonth &&
+    day === realDay;
 
-      const alreadyEdited =
-        editedDays.includes(day);
+  const isYesterday =
+    selectedYear === yYear &&
+    selectedMonth === yMonth &&
+    day === yDay;
 
-      if (!alreadyEdited) {
+  // block everything else first
+  if (!isToday && !isYesterday) return;
 
-      if (hearts <= 0) return;
+  // yesterday needs heart
+  if (isYesterday) {
 
-      setHearts((h) => h - 1);
+  const alreadyEdited = editedDays.includes(day);
 
-      setEditedDays((d) => [...d, day]);
+  // need heart only first time
+  if (!alreadyEdited) {
+
+    if (hearts <= 0) return;
+
+    setHearts((h) => h - 1);
+
+    setEditedDays((d) => [...d, day]);
 
   }
-  }
 
-    const newValue = !data[habit][day];
+}
 
-    setData((prev: any) => ({
-      ...prev,
-      [habit]: {
-        ...prev[habit],
-        [day]: newValue,
-      },
-    }));
+  const newValue = !data[habit][day];
 
-    try {
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          year: selectedYear,
-          month: selectedMonth + 1,
-          habit,
-          day,
-          value: newValue ? 1 : 0,
-        }),
-      });
-    } catch (error) {
-      console.error("Sheet save failed:", error);
-    }
-  };
+  setData((prev: any) => ({
+    ...prev,
+    [habit]: {
+      ...prev[habit],
+      [day]: newValue,
+    },
+  }));
+};
 
   const countCompleted = (habit: string) => {
     if (!data[habit]) return 0;
@@ -375,23 +382,36 @@ const getHeartMessage = () => {
             {[...Array(daysInMonth)].map((_, i) => {
               const day = i + 1;
               const completed = data[habit]?.[day];
-              const clickable =(isCurrentMonth &&(day === realDay 
-                  ||(day < realDay &&(editedDays.includes(day) || hearts > 0))))
-                  ||(isPreviousMonth &&(editedDays.includes(day) 
-                  ||hearts > 0)
-                  );
+              const isToday =
+                              selectedYear === realYear &&
+                              selectedMonth === realMonth &&
+                              day === realDay;
+
+              const isYesterday =
+                              selectedYear === yYear &&
+                              selectedMonth === yMonth &&
+                              day === yDay;
+
+              const alreadyEdited =
+                              editedDays.includes(day);
+
+              const clickable =
+                              isToday ||
+                              (isYesterday && (hearts > 0 || alreadyEdited));
+ 
+
               return (
                 <div
                   key={`${habit}-${day}`}
                   onClick={() => clickable && toggle(habit, day)}
                   className={`w-6 h-6 m-1 rounded
-                    ${
-                      completed
-                        ? "bg-green-500"
-                        : clickable
-                        ? "bg-gray-600 cursor-pointer"
-                        : "bg-gray-800 opacity-40"
-                    }`}
+                            ${
+                              completed
+                              ? "bg-green-500"
+                              : clickable
+                              ? "bg-gray-600 cursor-pointer"
+                              : "bg-gray-800 opacity-40"
+                  }`}
                 />
               );
             })}
